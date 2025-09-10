@@ -402,7 +402,8 @@ conf t
 RST Routing
 
 SERVER FARMS
--
+
+1. Apply IP address to P1, P2, S1, and S2
 IP address assignment
 
 !@S1
@@ -475,22 +476,22 @@ conf t
   switchport access vlan 10
   end
 
-
+2. Configure default gateway for P1, P2, S1, and S2
 
 Exercise 2: On A1, configure a floating default route on D1 as the primary default gateway, while D2 as the secondary. 
 On A2, configure a floating default route on D2 as the primary default gateway, while D1 as the secondary. 
 
 !@A1
 conf t
- ip route  0.0.0.0  0.0.0.0  __.__.__.__  __
- ip route  0.0.0.0  0.0.0.0  __.__.__.__  __
+ ip route  0.0.0.0  0.0.0.0  192.168.1.129 1 
+ ip route  0.0.0.0  0.0.0.0  192.168.1.130 5 
  end
 show ip route static
 
 !@A2
 conf t
- ip ____  0.0.0.0  0.0.0.0  __.__.__.__  __
- ip ____  0.0.0.0  0.0.0.0  __.__.__.__  __
+ ip route  0.0.0.0  0.0.0.0  192.168.1.130 1 
+ ip route  0.0.0.0  0.0.0.0  192.168.1.129 5
  end
 show ip route static
 
@@ -508,10 +509,11 @@ show ip route static
 
 !@P2
 conf t
- ip route __.__.__.__  __.__.__.__  __.__.__.__
- ip route __.__.__.__  __.__.__.__  __.__.__.__
+ ip route 192.168.1.128 255.255.255.224 10.2.1.2
+ ip route 192.168.1.130 255.255.255.255 10.2.1.1
  end
 show ip route static
+
 
 ---
 
@@ -527,6 +529,26 @@ EGP - Exterior Gateway Protocols
 ---
 EIGRP
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 !@R4
 conf t
  router eigrp 100
@@ -534,7 +556,8 @@ conf t
   network 10.1.4.8 0.0.0.3
   network 10.1.4.4 0.0.0.3
   end
-  
+
+
 !@D1
 config t
  router eigrp 100
@@ -579,8 +602,8 @@ show ip eigrp topology
 show ip router eigrp
 
 
-EIGRP Admin Distance:
-EIGRP Metric Cost:
+EIGRP Admin Distance: 90
+EIGRP Metric Cost: Bandwidt
 
 
 
@@ -674,6 +697,9 @@ conf t
   ip ospf 1 area 0
   end
 
+
+
+
 !@R1
 conf t
  router ospf 1
@@ -722,6 +748,8 @@ conf t
   ip ospf priority 0
   end
 
+
+clear ip ospf process
 ---
 
 OSPF Hello Packet
@@ -788,7 +816,7 @@ LSU - Link-State Updates
 LSA - Link-State Advertisement
 
 Type 1 LSA - (O) Router LSA
-Type 2 LSA - (O IA) Network LSA
+Type 2 LSA - (O Intra Area) Network LSA
 Type 3 LSA - Summary LSA
 
 ---
@@ -850,6 +878,7 @@ I1 & I4(GOOGLE DNS) = ASN 45
 I2 = ASN 2
 I3 = ASN 1
 
+
 !@R1
 conf t
  router bgp 1
@@ -891,6 +920,9 @@ conf t
   neighbor 35.3.5.5 remote-as 45
   neighbor 209.9.9.1 remote-as 1
   address-family ipv4
+    neighbor 32.3.2.2 activate
+  neighbor 35.3.5.5 activate
+  neighbor 209.9.9.1 activate
    network 209.9.9.0 mask 255.255.255.0
    network 32.3.2.0 mask 255.255.255.0
    network 33.33.33.33 mask 255.255.255.255
@@ -905,6 +937,9 @@ config t
   neighbor 35.3.5.3 remote-as 3
   neighbor 45.4.5.4 remote-as 45
   address-family ipv4
+  neighbor 25.2.5.2 activate
+  neighbor 35.3.5.3 activate
+  neighbor 45.4.5.4 activate
    network 8.8.8.8 mask 255.255.255.255
    network 55.55.55.55 mask 255.255.255.255
    network 25.2.5.0 mask 255.255.255.0
@@ -942,6 +977,10 @@ config t
  neighbor 32.3.2.3 remote-as 3
  neighbor 207.7.7.1 remote-as 1
  address-family ipv4
+ neighbor 24.2.4.4 activate
+ neighbor 25.2.5.5 activate
+ neighbor 32.3.2.3 activate
+ neighbor 207.7.7.1 activate
   network 207.0.0.0 mask 255.255.255.0
   network 22.22.22.22 mask 255.255.255.255
   network 24.2.4.0 mask 255.255.255.0
@@ -960,7 +999,10 @@ conf t
   
 ---
 
-NAT
+Recipt for NAT
+1. Specify OUTSIDE and INSIDE
+2. Configure an ACL (Which IPs are allowed to pass)
+3. PAT (Port address Translation)
 
 !@R1
 conf t
