@@ -538,14 +538,7 @@ EIGRP
 
 
 
-
-
-
-
-
-
-
-
+3. Configure EIGRP on D1, D2, and R4
 
 
 
@@ -643,6 +636,7 @@ conf t
 
 
 ---
+4. Configure OSPF on R4, R3, R2, R1
 OSPF (Single Area OSPF)
 
 !@R3
